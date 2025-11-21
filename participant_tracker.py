@@ -11,71 +11,55 @@ sample_data = [
     {'name': 'Bob', 'project': 'Task Automation', 'week': 46, 'date': datetime.date(2025, 11, 3), 'report': 'Wrote first automation script.'},
     {'name': 'Bob', 'project': 'Task Automation', 'week': 47, 'date': datetime.date(2025, 11, 10), 'report': 'Implemented prototype scripts.'},
     {'name': 'Bob', 'project': 'Task Automation', 'week': 48, 'date': datetime.date(2025, 11, 17), 'report': 'User testing and feedback.'},
-    # Add more entries as needed
 ]
 
-st.title("Participant Weekly Report Tracker (with Date and Week Selection)")
+st.title("📊 Participant Weekly Performance Tracker (Prototype)")
 
-# --- Extract options for selection ---
+# --- Step 1: Choose a participant ---
 names = sorted({e['name'] for e in sample_data})
+selected_name = st.selectbox("Select Participant", names)
 
-def get_projects_for_name(name):
-    return sorted({e['project'] for e in sample_data if e['name'] == name})
+# --- Step 2: Choose a project for that participant ---
+projects = sorted({e['project'] for e in sample_data if e['name'] == selected_name})
+selected_project = st.selectbox(f"Select Project for {selected_name}", projects)
 
-def get_weeks_for_name_project(name, project):
-    return sorted({e['week'] for e in sample_data if e['name'] == name and e['project'] == project})
-
-def get_dates_for_name_project(name, project):
-    return sorted({e['date'] for e in sample_data if e['name'] == name and e['project'] == project})
-
-selected_name = st.selectbox("Choose Participant", names)
-projects = get_projects_for_name(selected_name)
-selected_project = st.selectbox("Choose Project", projects)
-
-# --- Week slider selection ---
-weeks = get_weeks_for_name_project(selected_name, selected_project)
-if weeks:
-    min_week = min(weeks)
-    max_week = max(weeks)
-    selected_week = st.slider("Select Week Number", min_week, max_week, value=max_week)
-
-    if st.button("Show Weekly Report (by Week)"):
-        report = next(
-            (e['report'] for e in sample_data if
-             e['name'] == selected_name and e['project'] == selected_project and e['week'] == selected_week),
-            "No report found."
-        )
-        st.markdown(f"**Report for {selected_name}, {selected_project}, Week {selected_week}:**")
-        st.info(report)
+# --- Step 3a: View by Week ---
+weeks_info = [
+    f"Week {e['week']} ({e['date'].strftime('%b %d, %Y')})"
+    for e in sample_data if e['name'] == selected_name and e['project'] == selected_project
+]
+week_date_map = {
+    f"Week {e['week']} ({e['date'].strftime('%b %d, %Y')})": e
+    for e in sample_data if e['name'] == selected_name and e['project'] == selected_project
+}
+st.subheader("View a Single Week's Report")
+if weeks_info:
+    selected_week_label = st.selectbox("Choose Week", weeks_info)
+    if st.button("Show Weekly Report"):
+        entry = week_date_map.get(selected_week_label)
+        st.success(f"**{selected_name} - {selected_project} - {selected_week_label}:**\n\n{entry['report']}")
 else:
-    st.warning("No week data available for this selection.")
+    st.info("No weekly data available for this project/participant.")
 
-# --- Calendar date range picker ---
-st.write("---")
-st.write("Or select a date range to see reports:")
+st.markdown("---")
 
-dates = get_dates_for_name_project(selected_name, selected_project)
+# --- Step 3b: View by Date Range ---
+st.subheader("Or View Reports for a Date Range")
+dates = [e['date'] for e in sample_data if e['name'] == selected_name and e['project'] == selected_project]
 if dates:
-    start_date = min(dates)
-    end_date = max(dates)
-    user_start_date, user_end_date = st.date_input(
-        "Select Start and End Date",
-        value=[start_date, end_date],
-        min_value=start_date, max_value=end_date
-    )
-
-    if st.button("Show Weekly Reports (by Date Range)"):
+    min_date, max_date = min(dates), max(dates)
+    start_date, end_date = st.date_input("Select date range", [min_date, max_date], min_value=min_date, max_value=max_date)
+    if st.button("Show Reports from Date Range"):
         filtered = [
             e for e in sample_data
             if e['name'] == selected_name and
                e['project'] == selected_project and
-               user_start_date <= e['date'] <= user_end_date
+               start_date <= e['date'] <= end_date
         ]
         if filtered:
             for entry in filtered:
-                st.markdown(f"- **Week {entry['week']} ({entry['date'].isoformat()}):** {entry['report']}")
+                st.markdown(f"- **Week {entry['week']} ({entry['date'].strftime('%b %d, %Y')}):** {entry['report']}")
         else:
-            st.info("No reports found in this date range.")
+            st.info("No reports in selected date range.")
 else:
-    st.warning("No date data available for this selection.")
-
+    st.info("No date data available for this project/participant.")
