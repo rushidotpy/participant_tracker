@@ -13,7 +13,7 @@ sample_data = [
     {'name': 'Bob', 'project': 'Task Automation', 'week': 48, 'date': datetime.date(2025, 11, 17), 'report': 'User testing and feedback.'},
 ]
 
-st.title("📊 Participant Weekly Performance Tracker (Prototype)")
+st.title("Participant Weekly Performance Tracker (Prototype)")
 
 # --- Step 1: Choose a participant ---
 names = sorted({e['name'] for e in sample_data})
