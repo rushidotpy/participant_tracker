@@ -23,13 +23,13 @@ selected_name = st.selectbox("Select Participant", names)
 projects = sorted({e['project'] for e in sample_data if e['name'] == selected_name})
 selected_project = st.selectbox(f"Select Project for {selected_name}", projects)
 
-# --- Step 3a: View by Week ---
+# --- Step 3a: View by Week (Date Only in Selector) ---
 weeks_info = [
-    f"Week {e['week']} ({e['date'].strftime('%b %d, %Y')})"
+    f"Week ({e['date'].strftime('%b %d, %Y')})"
     for e in sample_data if e['name'] == selected_name and e['project'] == selected_project
 ]
 week_date_map = {
-    f"Week {e['week']} ({e['date'].strftime('%b %d, %Y')})": e
+    f"Week ({e['date'].strftime('%b %d, %Y')})": e
     for e in sample_data if e['name'] == selected_name and e['project'] == selected_project
 }
 st.subheader("View a Single Week's Report")
@@ -58,7 +58,7 @@ if dates:
         ]
         if filtered:
             for entry in filtered:
-                st.markdown(f"- **Week {entry['week']} ({entry['date'].strftime('%b %d, %Y')}):** {entry['report']}")
+                st.markdown(f"- **Week ({entry['date'].strftime('%b %d, %Y')}):** {entry['report']}")
         else:
             st.info("No reports in selected date range.")
 else:
