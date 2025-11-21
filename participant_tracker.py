@@ -32,7 +32,7 @@ week_date_map = {
     f"Week ({e['date'].strftime('%b %d, %Y')})": e
     for e in sample_data if e['name'] == selected_name and e['project'] == selected_project
 }
-st.subheader("To view a single week's report")
+st.subheader("View a single week's report")
 if weeks_info:
     selected_week_label = st.selectbox("Choose Week", weeks_info)
     if st.button("Show Weekly Report"):
