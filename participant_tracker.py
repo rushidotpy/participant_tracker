@@ -32,7 +32,7 @@ week_date_map = {
     f"Week ({e['date'].strftime('%b %d, %Y')})": e
     for e in sample_data if e['name'] == selected_name and e['project'] == selected_project
 }
-st.subheader("View a Single Week's Report")
+st.subheader("To view a single week's report")
 if weeks_info:
     selected_week_label = st.selectbox("Choose Week", weeks_info)
     if st.button("Show Weekly Report"):
@@ -44,7 +44,7 @@ else:
 st.markdown("---")
 
 # --- Step 3b: View by Date Range ---
-st.subheader("Or View Reports for a Date Range")
+st.subheader("View reports for a date range")
 dates = [e['date'] for e in sample_data if e['name'] == selected_name and e['project'] == selected_project]
 if dates:
     min_date, max_date = min(dates), max(dates)
